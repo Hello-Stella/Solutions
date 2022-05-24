@@ -1,38 +1,53 @@
 @startuml
 
 
-==receiving a loan application==
+==receive a loan application==
 autonumber
 "Front-end system" -> "Control system": website credit card application
-"Front-end system" <<-- "Control system": http response 200
+"Front-end system" <-- "Control system": http response 200
 alt  error
-"Front-end system" <<-- "Control system": http error response
+"Front-end system" <-- "Control system": http error response
 "Control system" -> "Control system": request is not stored in DB
 end
 "Control system" -> "Control system": saving the credit application in DB in status "INITIAL"
 
-==checking the availability of open credit products==
+
+==check the availability of open credit products==
 autonumber
 "Control system" -> "Integration adapter": requesting information about open credit cards
 "Integration adapter" -> "Proccessing system": requesting information about open credit cards
-"Integration adapter" <<-- "Proccessing system": response with information "no open credit cards"
+"Integration adapter" <-- "Proccessing system": response with information "no open credit cards"
 alt response error
-"Integration adapter" <<-- "Proccessing system": error response
+"Integration adapter" <-- "Proccessing system": error response
 "Control system" -> "Control system": changing the status of an application from "INITIAL" to "Error"
 end
-"Control system" <<-- "Integration adapter": response with information "no open credit cards"
+"Control system" <-- "Integration adapter": response with information "no open credit cards"
 "Control system" -> "Control system": analysis of the response, if the credit card is not found then
 "Control system" -> "Control system": changing the status of an application from "INITIAL" to "SAVED"
 alt opened credit cards detected
 "Control system" -> "Control system": analysis of the response, if the credit card is found then
-"Control system" -> "Control system": changing the status of an application from "INITIAL" to "SAVED"
+"Control system" -> "Control system": changing the status of an application from "INITIAL" to "REFUSED"
 "Control system" -> "mailing system": informing the client about the impossibility to issue a new credit card
 end
 
 
 ==work with scoring services==
-"Control system" -> "The scorring system"
-"Control system" <- "The scorring system"
+autonumber
+"Control system" -> "The scorring system": checking the moratorium at the client
+"Control system" <-- "The scorring system": response that the client does not have a moratorium
+alt the client has a moratorium
+"Control system" <-- "The scorring system": response that the client have a moratorium
+"Control system" -> "Control system": changing the status of an application from "SAVED"" to "DISPATCHED"
+"Control system" -> "mailing system": informing the client about the impossibility to issue a new credit card
+end
+"Control system" -> "The scorring system": submitting a loan application for approval
+"Control system" <<-- "The scorring system": response with a positive credit decision
+"Control system" -> "Control system": changing the status of an application from "DISPATCHED"" to "EXECUTED"
+alt credit decision is negative
+"Control system" <<-- "The scorring system": response with a negative credit decision
+"Control system" -> "Control system": changing the status of an application from "DISPATCHED"" to "REFUSED"
+ end
 
+==issuance information received==
 
 @enduml

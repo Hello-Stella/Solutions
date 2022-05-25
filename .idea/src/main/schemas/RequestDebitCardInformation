@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified"
+           elementFormDefault="unqualified">
+
+    <xs:element name="CardInformationRq">
+        <xs:annotation>
+            <xs:documentation>Card information request</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="CardNumber">
+                    <xs:annotation>
+                        <xs:documentation>Number of card (DPAN)</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:pattern value="[a-zA-Z0-9]{1,19}"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="RqTm">
+                    <xs:annotation>
+                        <xs:documentation>DateTime of Request</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:dateTime">
+                            <xs:pattern
+                                    value="\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(.[\d]{1,6})?(([+\-]\d\d:\d\d)|Z)?"
+                            />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="UUID">
+                    <xs:annotation>
+                        <xs:documentation>Universal Unique Identifier, needed to correlate the request with the response</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:pattern value="[0-9a-zA-Z]{32}"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="CardInformationRs">
+        <xs:annotation>
+            <xs:documentation>Card information response</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="RsTm">
+                    <xs:annotation>
+                        <xs:documentation>DateTime of Response</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:dateTime">
+                            <xs:pattern
+                                    value="\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(.[\d]{1,6})?(([+\-]\d\d:\d\d)|Z)?"
+                            />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="UUID">
+                    <xs:annotation>
+                        <xs:documentation>Universal Unique Identifier, needed to correlate the response with the request</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:pattern value="[0-9a-zA-Z]{32}"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="CardInfo">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="PaymentSystem ">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="Master Card"/>
+                                        <xs:enumeration value="VISA"/>
+                                        <xs:enumeration value="Union Pay"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="CardAccountInfo" minOccurs="0" type="xs:string"/>
+                            <xs:element name="DateOfIssue" type="xs:date"/>
+                            <xs:element name="DateOfExpire" type="xs:date"/>
+                            <xs:element name="CardStatus">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:pattern value="\d{3}-[A-Z]{2}"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="CardBalance ">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:decimal"/>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="BankInfo" minOccurs="0" nillable="false">
+                                <xs:complexType>
+                                    <xs:attribute name="BranchId" type="xs:string"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="ClientInfo">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element name="IdClient" type="xs:string"/>
+                            <xs:element name="IdentityInfo">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="IdentityCardNumber">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:long"/>
+                                            </xs:simpleType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="ContactInfo">
+                                <xs:complexType>
+                                    <xs:all>
+                                        <xs:element name="Country" type="xs:string"/>
+                                        <xs:element name="City" type="xs:string"/>
+                                        <xs:element minOccurs="0" name="State" type="xs:string"/>
+                                        <xs:element name="Street" type="xs:string"/>
+                                        <xs:element name="Phone"/>
+                                        <xs:element name="ZipCode" type="xs:integer"/>
+                                    </xs:all>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:all>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

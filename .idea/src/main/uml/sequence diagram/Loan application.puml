@@ -8,7 +8,7 @@ autonumber
 "Control system" -> "Control system": saving the credit application in DB in status "INITIAL"
 
 alt error on server
-"Front-end system" <-- "Control system": http error response 500
+"Front-end system" <-[#blue]- "Control system": http error response 500
 "Control system" -> "Control system": application is not saved in the database (a replay is needed)
 end
 
@@ -22,7 +22,7 @@ autonumber
 "Control system" -> "Control system": changing the status of an application from "INITIAL" to "SAVED"
 
 alt information search error
-"Integration adapter" <-- "Proccessing system": error response
+"Integration adapter" <-[#blue]- "Proccessing system": error response
 "Control system" -> "Control system": changing the status of an application from "INITIAL" to "ERROR"
 end
 

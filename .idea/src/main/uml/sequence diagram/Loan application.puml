@@ -5,7 +5,9 @@
 autonumber
 "Front-end system" -> "Control system": application for a credit card from a customer
 "Front-end system" <-- "Control system": http success response 200
-"Control system" -> "Control system": saving the credit application in DB in status "INITIAL"
+database DB  #gold
+"Control system" -> DB:saving the credit application in DB in status "INITIAL"
+
 
 alt error on server
 "Front-end system" <-[#blue]- "Control system": http error response 500
@@ -19,48 +21,49 @@ autonumber
 "Integration adapter" <-- "Proccessing system": response with information
 "Control system" <-- "Integration adapter": proxying a response
 "Control system" -> "Control system": analysis of the response: "no avalible credit cards"
-"Control system" -> "Control system": changing the status of an application from "INITIAL" to "SAVED"
+"Control system" -> DB:changing the status of an application from "INITIAL" to "SAVED"
 
 alt information search error
 "Integration adapter" <-[#blue]- "Proccessing system": error response
-"Control system" -> "Control system": changing the status of an application from "INITIAL" to "ERROR"
+"Control system" -> DB: changing the status of an application from "INITIAL" to "ERROR"
 end
 
 alt avalible credit cards detected
 "Control system" -> "Control system": analysis of the response: " avalible credit cards exist"
-"Control system" -> "Control system": changing the status of an application from "INITIAL" to "REJECTED"
-"Control system" ->> "mailing system": informing the client: "a new credit card cannot be issued while the current one is valid"
+"Control system" -> DB: changing the status of an application from "INITIAL" to "REJECTED"
+"Control system" ->> "Mailing system": informing the client: "a new credit card cannot be issued while the current one is valid" /'because if client already has a loan, it is impossible to open a new one'/
 
 
 ==Appeals to scoring services==
 autonumber
-"Control system" -> "The scorring system": checking the moratorium on the client
-"Control system" <-- "The scorring system": response: "the client does not have a moratorium"
+"Control system" -> "Scorring system": checking the moratorium on the client
+"Control system" <-- "Scorring system": response: "the client does not have a moratorium"
 
 alt the client has a moratorium
-"Control system" <-- "The scorring system": response: "the client have a moratorium"
-"Control system" -> "Control system": changing the status of an application from "SAVED" to "DISPATCHED"
-"Control system" ->> "mailing system": informing the client: "a new credit card cannot be issued, please contact the bank for details"
+"Control system" <-- "Scorring system": response: "the client have a moratorium"
+"Control system" -> DB: changing the status of an application from "SAVED" to "DISPATCHED"
+"Control system" ->> "Mailing system": informing the client: "a new credit card cannot be issued, please contact the bank for details" /'bacause if client has a moratorium, he need to deal with it'/
 end
 
-"Control system" -> "The scorring system": sending a credit card application for consideration
-"Control system" <<-- "The scorring system": response with a positive credit decision
-"Control system" -> "Control system": changing the status of an application from "DISPATCHED"" to "EXECUTED"
-"Control system" ->> "mailing system": informing the client: "you have a credit card approved, you can pick it up at the bank"
+"Control system" -> "Scorring system": sending a credit card application for consideration
+...max 6 hourse latter ...
+"Control system" <<-- "Scorring system": response with a positive credit decision
+"Control system" -> DB: changing the status of an application from "DISPATCHED"" to "EXECUTED"
+"Control system" ->> "Mailing system": informing the client: "you have a credit card approved, you can pick it up at the bank"
 
 
 alt credit decision is negative
-"Control system" <<-- "The scorring system": response with a negative credit decision
-"Control system" -> "Control system": changing the status of an application from "DISPATCHED"" to "REJECTED"
+"Control system" <<-- "Scorring system": response with a negative credit decision
+"Control system" -> DB: changing the status of an application from "DISPATCHED"" to "REJECTED"
  end
 
 ==Getting information about the credit card issue==
 autonumber
 "Control system" <<- "Proccessing system": the event that the credit card was issued received
 "Control system" -> "Control system": search in the DB of the client for whom the credit card was issued
-"Control system" -> "Control system": changing the status of an application from "EXECUTED" to "ISSUED"
-alt the card issue event was not received within 30 days
-"Control system" -> "Control system": changing the status of an application from previoce to "EXPIRED"
+"Control system" -> DB: changing the status of an application from "EXECUTED" to "ISSUED"
+alt the card issue event was not received within 30 days /'this is possible if the client did not come to the bank for his credit card'/
+"Control system" -> DB: changing the status of an application from previoce to "EXPIRED"
 end
 
 

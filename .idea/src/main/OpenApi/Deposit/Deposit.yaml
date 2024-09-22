@@ -74,6 +74,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/main/OpenApi/Error'
+    put:
+      description: ""
+      parameters: []
+      responses:
+        "200":
+          description: "OK"
   /deposits/{id}:
     get:
       description: Returns a user based on a single ID, if the user does not have access to the deposit

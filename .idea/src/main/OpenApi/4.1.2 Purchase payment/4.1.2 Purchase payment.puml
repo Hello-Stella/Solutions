@@ -1,0 +1,37 @@
+@startuml
+
+
+==Purchase registration==
+
+actor "Customer" as A
+participant "Merchant platform" as B
+participant "Payment Gateway" as C
+
+database DB  #gold
+
+
+
+"A" ->> "C": 1 Fill in form with a credit card data
+Activate A
+Activate C
+
+"C" ->> "C": 2 PAN Validation
+opt validation error
+"B" <<-[#blue] "C": http error response
+note left: invalid card number
+end
+
+"C" ->> "C": 2 Card expiration validation
+opt validation error
+"B" <<-[#blue] "C": http error response
+note left: card expired
+end
+
+
+"A" <-- "C": 2 Response with intermediate status
+Deactivate A
+Deactivate C
+
+
+@enduml
+

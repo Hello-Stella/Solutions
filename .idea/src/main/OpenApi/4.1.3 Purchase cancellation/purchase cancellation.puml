@@ -1,0 +1,29 @@
+@startuml
+
+actor "Customer" as A
+participant "Merchant platform" as B
+participant "Payment Gateway" as C
+database DB  #gold
+participant "IPGeo system" as D #lightblue
+participant "Anti-Fraud system" as E
+participant "VTS" as F
+participant "MDES" as G
+participant "Card-Issuing Bank" as H
+
+"A" ->> "B": Requests to cancell a purchase
+Activate A
+"B" ->> "C": Invokes cancell API
+Activate B
+Activate C
+"C" ->> "H": Initiiates a refund
+Activate H
+"C" <-- "H": Sends a response
+"C" ->> DB: updates the transaction and order statuses to "Canceled" and sends a notification to the merchant platform
+Deactivate H
+"B" <-- "C": Sends a response and updates order status
+"A" <-- "B": Receives a response with the appropriate status
+
+
+
+
+@enduml

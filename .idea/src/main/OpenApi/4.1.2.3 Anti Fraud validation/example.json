@@ -1,0 +1,33 @@
+{
+  "rquid": "123e4567-e89b-12d3-a456-426614174000",
+  "datetime": "2024-09-14T12:00:00Z",
+  "transaction_id": "txn789123",
+  "dpan": "1234AA6BB12345678",
+  "order_id": "order456",
+  "merchant_id": "merchant123",
+  "merchant_name": "example merchant",
+  "transaction_type": "buy",
+  "amount": 99.99,
+  "quantity": 2,
+  "currency": "usd",
+  "transactiondatetime": "2024-09-12T14:23:45Z",
+  "client_email": "client@example.com",
+  "client_name": "john doe",
+  "client_phone": "+1234567890",
+  "payment_method": "creadit_card",
+  "billing_address": {
+    "country": "us",
+    "city": "new york",
+    "zip_code": "10001",
+    "street_address": "123 example street"
+  },
+}
+
+
+
+
+{
+  "rquid": "123e4567-e89b-12d3-a456-426614174000",
+  "statusCode": "200",
+  "statusMessage":"OK"
+}

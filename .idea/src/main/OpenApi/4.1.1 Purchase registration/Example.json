@@ -1,0 +1,26 @@
+{
+  "rquid": "123e4567-e89b-12d3-a456-426614174000",
+  "datetime": "2024-09-12T14:23:45Z",
+  "returnUrl": "https://page1.ru",
+  "failUrl": "https://page2.error.ru",
+  "merchantid": "merchant123",
+  "merchantName": "Example Merchant",
+  "transactionType": "buy",
+  "orderid": "order456",
+  "orderDescription": "Electronics Purchase",
+  "amount": 99.99,
+  "quantity": 2,
+  "currency": "USD",
+  "transactionId": "txn789123",
+  "clientIP": "77.137.67.59",
+  "clientEmail": "client@example.com",
+  "clientName": "John Doe",
+  "clientPhone": "+1234567890",
+  "paymentMethods": "credit_card"
+}
+
+{
+  "rquid": "123e4567-e89b-12d3-a456-426614174000",
+  "statusCode": "200",
+  "statusMessage":"OK"
+}

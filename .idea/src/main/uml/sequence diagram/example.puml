@@ -1,0 +1,18 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+actor Senya
+actor Stella
+Senya->Stella: позвала кушать
+Senya<-Stella: мяукнул
+alt
+Senya<-Stella: проигнорировал
+
+Senya->>Stella: положила покушать
+Senya<<--Stella: пришел есть
+
+@enduml
+
+// закрашенные стрелки  синхронное
+//  простые стрелки  асинхронное

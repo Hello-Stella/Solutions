@@ -1,0 +1,35 @@
+@startuml
+
+
+==Purchase registration==
+
+actor "Customer" as A
+participant "Merchant platform" as B
+participant "Payment Gateway" as C
+database DB  #gold
+participant "IPGeo system" as I #lightblue
+
+
+
+"A" ->> "B": 1 Places an order
+Activate A
+Activate B
+"B" ->> "C": 2 Registers an order
+Activate C
+opt error on server
+"B" <<-[#blue] "C": http error response
+end
+"C" ->> "I": 2 Determines customer's country
+Activate I
+"C" <-- "I": 2 Response with customer's country
+Deactivate I
+"B" <-- "C": 3 Response with country oriented payment form
+"C" ->> DB: order data saved
+Deactivate C
+"A" <-- "B": 4 Redirects to the payment form
+Deactivate B
+Deactivate A
+
+
+@enduml
+

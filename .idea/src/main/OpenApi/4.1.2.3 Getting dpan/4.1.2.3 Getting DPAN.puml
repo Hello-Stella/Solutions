@@ -1,0 +1,51 @@
+@startuml
+
+actor "Customer" as A
+participant "Merchant platform" as B
+participant "Payment Gateway" as C
+database DB  #gold
+participant "IPGeo system" as D #lightblue
+participant "Anti-Fraud system" as E
+participant "VTS" as F
+participant "MDES" as G
+participant "Card-Issuing Bank" as H
+
+
+==PAN tokenization==
+
+
+group Card network determinations [choosing visa or mc]
+"C" ->> "C": 4 Determines card network brand
+Activate C
+
+alt VISA
+"C" ->> "F":  5 Sends request with PAN to get DPAN
+Activate F
+"C" <-- "F":  6 Receives response with DPAN
+Deactivate F
+
+opt error response
+"C" <<-[#blue] "F": http error response
+"C" ->>  "F":  re-try request
+"C" ->> DB: saves DPAN
+Deactivate C
+end
+
+alt Master Card
+"C" ->> "G":  5 Sends request with PAN to get DPAN
+Activate C
+Activate G
+"C" <-- "G":  6 Receives response with DPAN
+Deactivate G
+opt error response
+"C" <<-[#blue] "G": http error response
+"C" ->>  "G":  re-try request
+"C" ->> DB: 7 saves DPAN
+Deactivate C
+end
+
+
+
+
+@enduml
+

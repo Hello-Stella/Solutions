@@ -1,0 +1,126 @@
+@startuml
+
+actor "Customer" as A
+participant "Merchant platform" as B
+participant "Payment Gateway" as C
+database DB  #gold
+participant "IPGeo system" as D #lightblue
+participant "Anti-Fraud system" as E
+participant "VTS" as F
+participant "MDES" as G
+participant "Issuing Bank" as H
+
+==Purchase registration==
+"A" ->> "B": 1 Places an order
+Activate A
+Activate B
+"B" ->> "C": 2 Registers an order
+Activate C
+"C" ->> DB: 3 Saves the data
+"C" ->> "D": 4 Determines customer's country
+Activate D
+"C" <-- "D": 5 Responses
+Deactivate D
+"C" ->> "C": 6 Choses country oriented payment template
+"B" <-- "C": 7 Response with payment form template
+Deactivate C
+"A" <-- "B": 8 Redirects customers to the payment form
+Deactivate B
+Deactivate A
+
+
+==Purchase payment==
+"A" ->> "C": 9 Sends the payment form with a credit card data
+Activate A
+Activate C
+Deactivate A
+"C" ->> "C": 10 Receives and validate the customer's card data and validate
+group Card network determinations [choosing VISA or MC]
+"C" ->> "C": 11 Determines card network brand
+alt VISA
+"C" ->> "F":  12 Sends request with PAN
+Activate F
+"C" <-- "F":  13 Receives response with DPAN
+Deactivate F
+end
+alt MC
+"C" ->> "G":  12 Sends request with PAN
+Activate G
+"C" <-- "G":  13 Receives response with DPAN
+Deactivate G
+end
+end
+"C" ->> DB: 14 Saves the data
+Deactivate C
+Deactivate B
+
+
+==Anti-Fraud check==
+"C" ->> "E": 15 Sends request for anti-fraud check
+Activate C
+Activate E
+"E" ->> "E": 16 Invokes anti-fraud screeneng
+"C" <-- "E": 17 Sends screeneng results
+Deactivate E
+"C" ->> DB: 18 Saves the data
+Deactivate C
+
+==Transaction authorization==
+"C" ->> "H": 19 Requests for payment authirization
+Activate C
+Activate H
+"H" ->> "H": 20 Invokes card data validation
+"C" <-- "H": 21 Receives results
+Deactivate H
+"C" ->> DB: 22 Saves the data
+"B" <-- "C": 23 Response with a status
+Deactivate C
+"A" <-- "B": 23 Response with a status
+Deactivate B
+Deactivate A
+
+alt Purchase cancellation
+"A" ->> "B": 1 Requests order cancellation
+Activate A
+Activate B
+"B" ->> "C": 2 Transmits cancelation request
+Activate C
+"C" ->> "C": 3 Checks in DB which order should be canceleld
+"C" ->> "H": 4 Requests for payment cancellation
+Activate H
+"C" <-- "H": 5 Response with a status
+Deactivate H
+"B" <-- "C": 6 Response with a status
+Deactivate C
+"A" <-- "B": 7 Response with a status
+Deactivate B
+Deactivate A
+
+
+==Charging gateway fee==
+
+note across: The event occurs every last day of the month:\n""""
+
+"C"->>"C": 1 Fee calculation
+Activate C
+"B" <<-"C": 2 Requests for fee
+Activate B
+
+Deactivate B
+Deactivate C
+
+...some time after (time determined by the business)...
+
+"B" ->> "C": 3 Fee Payment
+Activate C
+Activate B
+"C" ->> DB: 4 Saves the data
+Deactivate C
+Deactivate B
+
+
+
+
+end
+@enduml
+

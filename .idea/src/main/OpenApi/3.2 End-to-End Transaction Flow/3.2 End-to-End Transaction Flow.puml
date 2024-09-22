@@ -1,0 +1,37 @@
+@startuml
+scale 800 width
+
+[*] -> State1 : Payment request from Merchant
+State1 : Created
+State1 --> State2 : Request to Anti-Fraud
+State2 : In progress
+
+State2 --> State3 : Response "Approved" from Anti-Fraud
+State3 : Approved
+State2 --> State4 : Response "Declined" from Anti-Fraud
+State4 : Rejected
+State4 --> [*]
+
+State3 --> State5 : Payment request to Issuing-bank
+State5 : Pending
+
+State5 --> State6 : Response "Approved" from Issuing-bank
+State6 : Authorized
+State6 --> [*]
+
+State6 --> State7 : Response "Declined" from Issuing-bank
+State7 : Declined
+State7 --> [*]
+
+
+[*] -> State9 : Cancellation request from Merchant
+State9 : Updated
+
+State9 --> State10 : Cancel request to Issuing-bank
+State10 : Pending
+
+State10 --> State11 : Response "Cancelled" from Issuing-bank
+State11 : Cancelled
+
+State11 --> [*]
+@enduml

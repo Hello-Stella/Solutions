@@ -9,21 +9,34 @@ actor Customer
 
 
 node Payment_System as B{
-
 component Payment_Gateway as C
-
 component Anti_Fraud_System as D
-
-
 node Integration_Layer as E {
+card OpenShift #text:red {
 
-collections Adapter_Bank_A as F
+component Docker_Container as F #text:red {
+agent Adapter_ForPayment_Bank_A
+}
 
-collections Adapter_Bank_B as G
+component Docker_Container as F1 #text:red {
+agent Adapter_ForCancellation_Bank_A
+}
+
+
+component Docker_Container as G #text:red {
+agent Adapter_ForPayment_Bank_B
+}
+
+component Docker_Container as G1 #text:red {
+agent Adapter_ForCancellation_Bank_B
+}
+
 
 }
 
-database DataBase as DB
+}
+
+database MySQL_DB as DB #text:red
 
 
 folder Payment_Forms as L {
@@ -72,6 +85,10 @@ C-->I : HTTP
 I~~>C
 F-->J : HTTP
 J~~>F
+F1-->J : HTTP
+J~~>F1
 G-->K : gRPC
 K~~>G
+G1-->K : gRPC
+K~~>G1
 @enduml

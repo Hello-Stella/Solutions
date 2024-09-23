@@ -8,8 +8,12 @@ actor Customer
 }
 
 
-node Payment_System as B{
-component Payment_Gateway as C
+node Payment_System as B {
+component Java as C #text:red{
+component Payment_Gateway
+}
+
+
 component Anti_Fraud_System as D
 node Integration_Layer as E {
 card OpenShift #text:red {
@@ -31,7 +35,6 @@ component Docker_Container as G1 #text:red {
 agent Adapter_ForCancellation_Bank_B
 }
 
-
 }
 
 }
@@ -43,6 +46,18 @@ folder Payment_Forms as L {
 collections Language_Templates
 
 }
+
+ component Report_generation_service as Y {
+   component ".NET_Report_service" #text:red {
+}
+   component Mail_Service #text:red{
+}
+
+   component Windows_Task_Scheduler #text:red{
+}
+
+}
+
 }
 
 
@@ -91,4 +106,6 @@ G-->K : gRPC
 K~~>G
 G1-->K : gRPC
 K~~>G1
+Y-->DB
+
 @enduml

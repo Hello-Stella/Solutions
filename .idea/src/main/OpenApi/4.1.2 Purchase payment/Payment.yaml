@@ -198,7 +198,7 @@ components:
           type: string
         transactionType:
           type: string
-          enum: [buy, refund, cancel]
+          enum: [buy, cancel]
         orderid:
           type: string
         orderDescription:

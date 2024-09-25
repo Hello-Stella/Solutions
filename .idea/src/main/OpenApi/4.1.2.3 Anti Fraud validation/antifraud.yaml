@@ -109,7 +109,6 @@ paths:
                     - country
                     - city
                     - zip_code
-                    - street_address
                   properties:
                     country:
                       type: string
@@ -123,10 +122,6 @@ paths:
                       type: string
                       description: Zip code of the billing address.
                       example: "10001"
-                    street_address:
-                      type: string
-                      description: Street address of the billing location.
-                      example: "123 Example Street"
       responses:
         '200':
           description: Transaction processed successfully with no issues detected.

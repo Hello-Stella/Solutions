@@ -4,11 +4,9 @@ actor "Customer" as A
 participant "Merchant platform" as B
 participant "Payment Gateway" as C
 database DB  #gold
-participant "IPGeo system" as D #lightblue
-participant "Anti-Fraud system" as E
 participant "VTS" as F
 participant "MDES" as G
-participant "Card-Issuing Bank" as H
+participant "Issuing Bank" as H
 
 "A" ->> "B": Requests to cancell a purchase
 Activate A

@@ -18,8 +18,7 @@
   "billing_address": {
     "country": "us",
     "city": "new york",
-    "zip_code": "10001",
-    "street_address": "123 example street"
+    "zip_code": "10001"
   },
 }
 

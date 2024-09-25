@@ -41,6 +41,9 @@ agent Adapter_ForCancellation_Bank_B
 
 database MySQL_DB as DB #text:red
 
+node HSM as U {
+database HSM_DB #text:red
+}
 
 folder Payment_Forms as L {
 collections Language_Templates
@@ -75,12 +78,12 @@ component Tokenization_service as I
 }
 
 
-node Card_Issuing_Bank_A as J {
+node Issuing_Bank_A as J {
 component _service1
 }
 
 
-node Card_Issuing_Bank_B as K {
+node Issuing_Bank_B as K {
 component _service
 }
 
@@ -93,6 +96,7 @@ E~~>C
 C-->D : HTTP
 D~~>C
 C-->DB : JDBC
+C-->U
 C-->H : HTTP
 H~~>C
 C-->M

@@ -2,9 +2,127 @@ openapi: "3.0.0"
 info:
   version: 1.0.0
   title: Purchase payment
-  description: API for Purchase payment
+  description: API for Cancel order
   contact:
     name: Stella
     email: s.b.nagirner@gmail.com
 servers:
   - url: http://api.example.com/hellostella/cancellpayment/api
+
+paths:
+  /transaction/cancel:
+    post:
+      summary: Cancel a payment transaction
+      operationId: cancelTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rquid:
+                  type: string
+                  format: uuid
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+                datetime:
+                  type: string
+                  format: date-time
+                  example: "2024-09-14T12:00:00Z"
+                returnUrl:
+                  type: string
+                  format: uri
+                  example: "https://page1.ru"
+                failUrl:
+                  type: string
+                  format: uri
+                  example: "https://page2.error.ru"
+                merchantid:
+                  type: string
+                  example: "merchant12345"
+                orderid:
+                  type: string
+                  example: "order456"
+                transactiontype:
+                  type: string
+                  enum: ["cancel"]
+                  example: "cancel"
+                pan:
+                  type: string
+                  pattern: "^[0-9]{16}$"
+                  example: "1234567812345678"
+                cardtype:
+                  type: string
+                  enum: ["visa", "mastercard"]
+                  example: "visa"
+                cardholdername:
+                  type: string
+                  example: "john doe"
+                cardexpiry:
+                  type: string
+                  pattern: "^(0[1-9]|1[0-2])[0-9]{2}$"
+                  example: "0924"
+                cvv:
+                  type: string
+                  pattern: "^[0-9]{3}$"
+                  example: "123"
+                country:
+                  type: string
+                  example: "us"
+                city:
+                  type: string
+                  example: "new york"
+                house:
+                  type: string
+                  example: "apt 4b"
+                zipcode:
+                  type: string
+                  example: "10001"
+              required:
+                - rquid
+                - datetime
+                - returnUrl
+                - failUrl
+                - merchantid
+                - orderid
+                - transactiontype
+                - pan
+                - cardtype
+                - cardholdername
+                - cardexpiry
+                - cvv
+                - country
+                - city
+                - house
+                - zipcode
+      responses:
+        '200':
+          description: Transaction cancellation successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rquid:
+                    type: string
+                    format: uuid
+                    example: "123e4567-e89b-12d3-a456-426614174000"
+                  statusCode:
+                    type: string
+                    example: "200"
+                  statusMessage:
+                    type: string
+                    example: "OK"
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    example: "400"
+                  statusMessage:
+                    type: string
+                    example: "Bad Request"

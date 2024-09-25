@@ -1,0 +1,24 @@
+{
+  "rquid": "123e4567-e89b-12d3-a456-426614174000",
+  "datetime": "2024-09-14T12:00:00Z",
+  "returnUrl": "https://page1.ru",
+  "failUrl": "https://page2.error.ru",
+  "merchantid": "merchant12345",
+  "orderid": "order456",
+  "transactiontype": "cancel",
+  "pan": "1234567812345678",
+  "cardtype": "visa",
+  "cardholdername": "john doe",
+  "cardexpiry": "0924",
+  "cvv": "123",
+  "country": "us",
+  "city": "new york",
+  "house": "apt 4b",
+  "zipcode": "10001"
+}
+
+{
+  "rquid": "123e4567-e89b-12d3-a456-426614174000",
+  "statusCode": "200",
+  "statusMessage":"OK"
+}

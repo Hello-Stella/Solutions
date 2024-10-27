@@ -1,0 +1,27 @@
+@startuml
+==Charging gateway fee==
+
+participant "Merchant platform" as B
+participant "Payment Gateway" as C
+database DB  #gold
+
+
+note across: The event occurs every last day of the month:\n""""
+
+"C"->>"C": 1 Fee calculation
+Activate C
+"B" <<-"C": 2 Requests for fee
+Activate B
+
+Deactivate B
+Deactivate C
+
+...some time after (time determined by the business)...
+
+"B" ->> "C": 3 Fee Payment
+Activate C
+Activate B
+"C" ->> DB: 4 Saves the data
+Deactivate C
+Deactivate B
+@enduml

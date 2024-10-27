@@ -5,6 +5,7 @@ participant "Merchant platform" as B
 participant "Payment Gateway" as C
 database DB  #gold
 participant "IPGeo system" as D #lightblue
+participant "YandexTranslate system" as II #lightblue
 participant "Anti-Fraud system" as E
 participant "VTS" as F
 participant "MDES" as G
@@ -12,70 +13,77 @@ participant "Issuing Bank" as H
 
 ==Purchase registration==
 "A" ->> "B": 1 Places an order
-Activate A
 Activate B
+Activate A
 "B" ->> "C": 2 Registers an order
 Activate C
+Deactivate B
 "C" ->> DB: 3 Saves the data
 "C" ->> "D": 4 Determines customer's country
 Activate D
 "C" <-- "D": 5 Responses
 Deactivate D
-"C" ->> "C": 6 Choses country oriented payment template
-"B" <-- "C": 7 Response with payment form template
+
+"C" ->> "II": 6 Request to translate the text
+Activate II
+"C" <-- "II": 7 Response with translated text
+Deactivate II
+"C" <--  "C": 8 Saves the data
+"A" <-- "C": 9 Response with payment form in customer's language
+alt Error
+"A" <-- "C": Response with payment form in default language
+end
 Deactivate C
-"A" <-- "B": 8 Redirects customers to the payment form
-Deactivate B
 Deactivate A
 
 
 ==Purchase payment==
-"A" ->> "C": 9 Sends the payment form with a credit card data
+"A" ->> "C": 10 Sends the payment form with a credit card data
 Activate A
 Activate C
 Deactivate A
-"C" ->> "C": 10 Receives and validate the customer's card data and validate
+"C" ->> "C": 11 Receives and validate the customer's card data and validate
 group Card network determinations [choosing VISA or MC]
-"C" ->> "C": 11 Determines card network brand
+"C" ->> "C": 12 Determines card network brand
 alt VISA
-"C" ->> "F":  12 Sends request with PAN
+"C" ->> "F":  13 Sends request with PAN
 Activate F
-"C" <-- "F":  13 Receives response with DPAN
+"C" <-- "F":  14 Receives response with DPAN
 Deactivate F
 end
 alt MC
-"C" ->> "G":  12 Sends request with PAN
+"C" ->> "G":  15 Sends request with PAN
 Activate G
-"C" <-- "G":  13 Receives response with DPAN
+"C" <-- "G":  16 Receives response with DPAN
 Deactivate G
 end
 end
-"C" ->> DB: 14 Saves the data
+"C" ->> DB: 17 Saves the data
 Deactivate C
 Deactivate B
 
 
 ==Anti-Fraud check==
-"C" ->> "E": 15 Sends request for anti-fraud check
+"C" ->> "E": 18 Sends request for anti-fraud check
 Activate C
 Activate E
-"E" ->> "E": 16 Invokes anti-fraud screeneng
-"C" <-- "E": 17 Sends screeneng results
+"E" ->> "E": 19 Invokes anti-fraud screeneng
+"C" <-- "E": 20 Sends screeneng results
 Deactivate E
-"C" ->> DB: 18 Saves the data
+"C" ->> DB: 21 Saves the data
 Deactivate C
 
 ==Transaction authorization==
-"C" ->> "H": 19 Requests for payment authirization
+"C" ->> "H": 22 Requests for payment authirization
 Activate C
 Activate H
-"H" ->> "H": 20 Invokes card data validation
-"C" <-- "H": 21 Receives results
+"H" ->> "H": 23 Invokes card data validation
+"C" <-- "H": 24 Receives results
 Deactivate H
-"C" ->> DB: 22 Saves the data
-"B" <-- "C": 23 Response with a status
+"C" ->> DB: 25 Saves the data
+"B" <-- "C": 26 Response with a status
 Deactivate C
-"A" <-- "B": 23 Response with a status
+"A" <-- "B": 27 Response with a status
 Deactivate B
 Deactivate A
 

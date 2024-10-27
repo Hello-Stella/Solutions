@@ -69,6 +69,10 @@ node IPGeo {
 component IP_Location_service as M
 }
 
+node YandexTranslate {
+component Text_Translation_service as MM
+}
+
 node VISA {
 component Tokenization_service as H
 }
@@ -100,6 +104,7 @@ C-->U
 C-->H : HTTP
 H~~>C
 C-->M
+C-->MM
 C-->I : HTTP
 I~~>C
 F-->J : HTTP

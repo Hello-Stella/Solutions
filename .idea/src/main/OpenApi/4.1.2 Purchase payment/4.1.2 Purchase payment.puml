@@ -1,36 +1,142 @@
 @startuml
 
-
-==Purchase registration==
-
 actor "Customer" as A
 participant "Merchant platform" as B
 participant "Payment Gateway" as C
-
 database DB  #gold
+participant "IPGeo system" as D #lightblue
+participant "YandexTranslate system" as II #lightblue
+participant "Anti-Fraud system" as E
+participant "VTS" as F
+participant "MDES" as G
+participant "Card issued Bank" as H
 
 
-
-"A" ->> "C": 1 Fill in form with a credit card data
+==Purchase registration==
+"A" -->> "B": 1 Places an order
 Activate A
+Activate B
+"B" ->> "C": 2 Order registration API triggers
+Deactivate A
+Activate C
+opt error on server
+"B" <<-[#blue] "C": http error response
+end
+
+"DB" <<-- "C": 3 Saves orders details
+"C" ->> "D": 4 Determines customer's country
+Activate D
+"C" <<- "D": 5 Response with customer's country
+Deactivate D
+"DB" <<-- "C": 6 Saves customer's country
+"B" <<- "C": 7 http response
+Deactivate C
+Deactivate B
+
+
+==Purchase payment==
+"B" ->> "C": 1 Payment order API triggers
+Activate B
 Activate C
 
-"C" ->> "C": 2 PAN Validation
+"C" ->> "II": 2 Request to translate the text
+Activate II
+"C" <<- "II": 3 Response with translated text
+Deactivate II
+
+"A" <<- "C": 4 Response with payment form in customer's language
+Activate A
+alt Error
+"A" <<- "C": Response with payment form in default language
+end
+
+"A" ->> "C": 5 Fill in form with a credit card data
+"C" -->> DB: 6 set up transaction status "created"
+
+"C" ->> "C": 7 PAN Validation
 opt validation error
-"B" <<-[#blue] "C": http error response
+"A" <<-[#blue] "C": http error response
 note left: invalid card number
 end
 
-"C" ->> "C": 2 Card expiration validation
+"C" ->> "C": 8 Card expiration validation
 opt validation error
-"B" <<-[#blue] "C": http error response
+"A" <<-[#blue] "C": http error response
 note left: card expired
 end
-
-
-"A" <-- "C": 2 Response with intermediate status
 Deactivate A
+"B" <<- "C": 9 http response
+Deactivate B
 Deactivate C
+
+==PAN tokenization==
+
+"C" ->> "C": 1 Validate the customer's card data and validate
+Activate C
+group Card network determinations [choosing VISA or MC]
+"C" ->> "C": 2 Determines card network brand
+alt VISA
+"C" ->> "F":  3 Sends request with PAN
+Activate F
+"C" <<-- "F":  4 Receives response with DPAN
+Deactivate F
+end
+alt MC
+"C" ->> "G":  5 Sends request with PAN
+Activate G
+"C" <<-- "G":  6 Receives response with DPAN
+Deactivate G
+end
+end
+"C" -->> DB: 7 Saves the data
+Deactivate C
+Deactivate B
+
+
+==Fraud check==
+
+"C" ->> "C": 1 Antifraud API triggers
+Activate C
+"C" -->> DB: 2 change transaction status "in progress"
+
+"C" --> "E": 3 Anti-Fraud check
+Activate E
+Deactivate C
+
+"C" <<-- "E": 4 Response with the approved status
+Activate C
+"C" -->> DB: 5 change transaction status "approved"
+opt transaction declined
+"C" <<-[#blue] "E": http error response
+Deactivate E
+"C" -->> DB: change transaction status "rejected"
+note left: stoplist
+end
+
+Deactivate C
+Deactivate A
+
+==Transaction authorization==
+"C" -->> "H": 1 Requests for transaction authirization
+Activate C
+Activate H
+"C" -->> DB: 2 change transaction status "pending"
+
+"C" <<-- "H": 3 Response with the approved status
+"C" -->> DB: 4 change transaction status "authorized"
+opt transaction declined
+"C" <<-[#blue] "H": http error response
+Deactivate H
+"C" -->> DB: change transaction status "declined"
+end
+"B" <<-- "C": 5 Response with a status
+Deactivate C
+Activate B
+"A" <<-- "B": 6 Response with a status
+Activate A
+Deactivate B
+Deactivate A
+
 
 
 @enduml

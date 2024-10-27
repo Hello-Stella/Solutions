@@ -9,83 +9,134 @@ participant "YandexTranslate system" as II #lightblue
 participant "Anti-Fraud system" as E
 participant "VTS" as F
 participant "MDES" as G
-participant "Issuing Bank" as H
+participant "Card issued Bank" as H
+
 
 ==Purchase registration==
 "A" ->> "B": 1 Places an order
-Activate B
+"A" -->> "B": 1 Places an order
 Activate A
-"B" ->> "C": 2 Registers an order
+Activate B
+"B" ->> "C": 2 Order registration API triggers
+Deactivate A
 Activate C
-Deactivate B
-"C" ->> DB: 3 Saves the data
+opt error on server
+"B" <<-[#blue] "C": http error response
+end
+
+"DB" <<-- "C": 3 Saves orders details
 "C" ->> "D": 4 Determines customer's country
 Activate D
-"C" <-- "D": 5 Responses
+"C" <<- "D": 5 Response with customer's country
 Deactivate D
-
-"C" ->> "II": 6 Request to translate the text
-Activate II
-"C" <-- "II": 7 Response with translated text
-Deactivate II
-"C" <--  "C": 8 Saves the data
-"A" <-- "C": 9 Response with payment form in customer's language
-alt Error
-"A" <-- "C": Response with payment form in default language
-end
+"DB" <<-- "C": 6 Saves customer's country
+"B" <<- "C": 7 http response
 Deactivate C
-Deactivate A
-
+Deactivate B
 
 ==Purchase payment==
-"A" ->> "C": 10 Sends the payment form with a credit card data
-Activate A
+"B" ->> "C": 1 Payment order API triggers
+Activate B
 Activate C
+
+"C" ->> "II": 2 Request to translate the text
+Activate II
+"C" <<- "II": 3 Response with translated text
+Deactivate II
+
+"A" <<- "C": 4 Response with payment form in customer's language
+Activate A
+alt Error
+"A" <<- "C": Response with payment form in default language
+end
+
+"A" ->> "C": 5 Fill in form with a credit card data
+"C" -->> DB: 6 set up transaction status "created"
+
+"C" ->> "C": 7 PAN Validation
+opt validation error
+"A" <<-[#blue] "C": http error response
+note left: invalid card number
+end
+
+"C" ->> "C": 8 Card expiration validation
+opt validation error
+"A" <<-[#blue] "C": http error response
+note left: card expired
+end
 Deactivate A
-"C" ->> "C": 11 Receives and validate the customer's card data and validate
+"B" <<- "C": 9 http response
+Deactivate B
+Deactivate C
+
+==PAN tokenization==
+
+"C" ->> "C": 1 Validate the customer's card data and validate
+Activate C
 group Card network determinations [choosing VISA or MC]
-"C" ->> "C": 12 Determines card network brand
+"C" ->> "C": 2 Determines card network brand
 alt VISA
-"C" ->> "F":  13 Sends request with PAN
+"C" ->> "F":  3 Sends request with PAN
 Activate F
-"C" <-- "F":  14 Receives response with DPAN
+"C" <<-- "F":  4 Receives response with DPAN
 Deactivate F
 end
 alt MC
-"C" ->> "G":  15 Sends request with PAN
+"C" ->> "G":  5 Sends request with PAN
 Activate G
-"C" <-- "G":  16 Receives response with DPAN
+"C" <<-- "G":  6 Receives response with DPAN
 Deactivate G
 end
 end
-"C" ->> DB: 17 Saves the data
+"C" -->> DB: 7 Saves the data
 Deactivate C
 Deactivate B
 
 
-==Anti-Fraud check==
-"C" ->> "E": 18 Sends request for anti-fraud check
+==Fraud check==
+
+"C" ->> "C": 1 Antifraud API triggers
 Activate C
+"C" -->> DB: 2 change transaction status "in progress"
+
+"C" --> "E": 3 Anti-Fraud check
 Activate E
-"E" ->> "E": 19 Invokes anti-fraud screeneng
-"C" <-- "E": 20 Sends screeneng results
-Deactivate E
-"C" ->> DB: 21 Saves the data
 Deactivate C
+
+"C" <<-- "E": 4 Response with the approved status
+Activate C
+"C" -->> DB: 5 change transaction status "approved"
+opt transaction declined
+"C" <<-[#blue] "E": http error response
+Deactivate E
+"C" -->> DB: change transaction status "rejected"
+note left: stoplist
+end
+
+Deactivate C
+Deactivate A
 
 ==Transaction authorization==
-"C" ->> "H": 22 Requests for payment authirization
+"C" -->> "H": 1 Requests for transaction authirization
 Activate C
 Activate H
-"H" ->> "H": 23 Invokes card data validation
-"C" <-- "H": 24 Receives results
+"C" -->> DB: 2 change transaction status "pending"
+
+"C" <<-- "H": 3 Response with the approved status
+"C" -->> DB: 4 change transaction status "authorized"
+opt transaction declined
+"C" <<-[#blue] "H": http error response
 Deactivate H
-"C" ->> DB: 25 Saves the data
-"B" <-- "C": 26 Response with a status
+"C" -->> DB: change transaction status "declined"
+end
+"B" <<-- "C": 5 Response with a status
 Deactivate C
-"A" <-- "B": 27 Response with a status
+Activate B
+"A" <<-- "B": 6 Response with a status
+Activate A
 Deactivate B
 Deactivate A
+
 
 alt Purchase cancellation
 "A" ->> "B": 1 Requests order cancellation
@@ -96,13 +147,14 @@ Activate C
 "C" ->> "C": 3 Checks in DB which order should be canceleld
 "C" ->> "H": 4 Requests for payment cancellation
 Activate H
-"C" <-- "H": 5 Response with a status
+"C" <<-- "H": 5 Response with a status
 Deactivate H
-"B" <-- "C": 6 Response with a status
+"B" <<-- "C": 6 Response with a status
 Deactivate C
-"A" <-- "B": 7 Response with a status
+"A" <<-- "B": 7 Response with a status
 Deactivate B
 Deactivate A
+end
 
 
 ==Charging gateway fee==
@@ -127,8 +179,5 @@ Deactivate C
 Deactivate B
 
 
-
-
-end
 @enduml
 

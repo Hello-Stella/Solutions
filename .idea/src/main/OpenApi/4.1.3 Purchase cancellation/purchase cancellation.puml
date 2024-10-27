@@ -4,24 +4,23 @@ actor "Customer" as A
 participant "Merchant platform" as B
 participant "Payment Gateway" as C
 database DB  #gold
-participant "VTS" as F
-participant "MDES" as G
-participant "Issuing Bank" as H
+participant "Card issued Bank" as H
 
-"A" ->> "B": Requests to cancell a purchase
+"A" ->> "B": 1 Requests order cancellation
 Activate A
-"B" ->> "C": Invokes cancell API
 Activate B
+"B" ->> "C": 2 Transmits cancelation request
 Activate C
-"C" ->> "H": Initiiates a refund
+"C" ->> "C": 3 Checks in DB which order should be canceleld
+"C" ->> "H": 4 Requests for payment cancellation
 Activate H
-"C" <-- "H": Sends a response
-"C" ->> DB: updates the transaction and order statuses to "Canceled" and sends a notification to the merchant platform
+"C" <<-- "H": 5 Response with a status
 Deactivate H
-"B" <-- "C": Sends a response and updates order status
-"A" <-- "B": Receives a response with the appropriate status
-
-
+"B" <<-- "C": 6 Response with a status
+Deactivate C
+"A" <<-- "B": 7 Response with a status
+Deactivate B
+Deactivate A
 
 
 @enduml

@@ -24,14 +24,14 @@ State7 : Declined
 State7 --> [*]
 
 
-[*] -> State9 : Cancellation request from Merchant
-State9 : Updated
+[*] -> State8 : Cancellation request from Merchant
+State8 : Updated
 
-State9 --> State10 : Cancel request to Issuing-bank
-State10 : Pending
+State8 --> State9 : Cancel request to Issuing-bank
+State9 : Cancelling
 
-State10 --> State11 : Response "Cancelled" from Issuing-bank
-State11 : Cancelled
+State9 --> State10 : Response "Cancelled" from Issuing-bank
+State10 : Cancelled
 
-State11 --> [*]
+State10 --> [*]
 @enduml

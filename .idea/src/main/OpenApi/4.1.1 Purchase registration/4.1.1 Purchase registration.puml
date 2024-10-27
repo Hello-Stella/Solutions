@@ -1,43 +1,34 @@
 @startuml
 
-
-==Purchase registration==
+@startuml
 
 actor "Customer" as A
 participant "Merchant platform" as B
 participant "Payment Gateway" as C
 database DB  #gold
-participant "IPGeo system" as I #lightblue
-participant "YandexTranslate system" as II #lightblue
+participant "IPGeo system" as D #lightblue
 
 
-
+==Purchase registration==
 "A" ->> "B": 1 Places an order
 Activate A
 Activate B
-"B" ->> "C": 2 Registers an order
+"B" ->> "C": 2 Order registration API triggers
+Deactivate A
 Activate C
 opt error on server
 "B" <<-[#blue] "C": http error response
 end
-"C" ->> "I": 3 Determines customer's country
-Activate I
-"C" <-- "I": 4 Response with customer's country
-Deactivate I
-"C" ->> "II": 5 Request to translate the text
-Activate II
-"C" <-- "II": 6 Response with translated text
-Deactivate II
-"B" <-- "C": 7 Response with order status
-Deactivate B
-"C" ->> DB: order data saved
-"A" <-- "C": 8 Redirects to the payment form in customer's language
-alt Error
-"A" <-- "C": Redirects to the payment form in default language
-end
-Deactivate A
-Deactivate C
 
+"DB" <<-- "C": 3 Saves orders details
+"C" ->> "D": 4 Determines customer's country
+Activate D
+"C" <<- "D": 5 Response with customer's country
+Deactivate D
+"DB" <<-- "C": 6 Saves customer's country
+"B" <<- "C": 7 http response
+Deactivate C
+Deactivate B
 
 @enduml
 

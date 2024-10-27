@@ -1,31 +1,35 @@
 @startuml
 
 
-==Fraud check==
-
 actor "Customer" as A
 participant "Merchant platform" as B
 participant "Payment Gateway" as C
 database DB  #gold
-participant "Anti-Fraud system" as D
+participant "Anti-Fraud system" as E
 
 
-"C" ->> "D": 1 Invokes the check
+==Fraud check==
+
+"C" ->> "C": 1 Antifraud API triggers
 Activate C
-Activate D
+"C" -->> DB: 2 change transaction status "in progress"
 
-"D" ->> "D": 2 Anti-Fraud check
-"C" <-- "D": 3 Response with the check details
+"C" --> "E": 3 Anti-Fraud check
+Activate E
+Deactivate C
 
+"C" <<-- "E": 4 Response with the approved status
+Activate C
+"C" -->> DB: 5 change transaction status "approved"
 opt transaction declined
-"C" <<-[#blue] "D": http error response
+"C" <<-[#blue] "E": http error response
+Deactivate E
+"C" -->> DB: change transaction status "rejected"
 note left: stoplist
 end
-Deactivate D
-
-"C" ->> DB: 4 change the transaction status
 
 Deactivate C
+Deactivate A
 
 @enduml
 

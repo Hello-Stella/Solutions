@@ -142,16 +142,18 @@ alt Purchase cancellation
 "A" ->> "B": 1 Requests order cancellation
 Activate A
 Activate B
-"B" ->> "C": 2 Transmits cancelation request
+"B" ->> "C": 2 Cancellation order API triggers
 Activate C
-"C" ->> "C": 3 Checks in DB which order should be canceleld
+"C" -->> DB: 3 Change transaction status "updated"
 "C" ->> "H": 4 Requests for payment cancellation
 Activate H
-"C" <<-- "H": 5 Response with a status
+"C" -->> DB: 5 Change transaction status "cancelling"
+"C" <<- "H": 6 Response with a status
 Deactivate H
-"B" <<-- "C": 6 Response with a status
+"C" -->> DB: 7 Change transaction status "cancelled"
+"B" <<- "C": 8 Response with a status
 Deactivate C
-"A" <<-- "B": 7 Response with a status
+"A" <<- "B": 9 Response with a status
 Deactivate B
 Deactivate A
 end

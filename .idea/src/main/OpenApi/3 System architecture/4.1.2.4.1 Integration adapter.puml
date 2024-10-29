@@ -1,0 +1,37 @@
+@startuml
+class PaymentGatewayAdapter {
+  + sendRequest(APIRequest request): APIResponse
+  + processResponse(APIResponse response)
+}
+
+class BankXAdapter extends PaymentGatewayAdapter {
+  + specificBankXMethod()
+}
+
+
+class BankYAdapter extends PaymentGatewayAdapter {
+  + specificBankYMethod()
+}
+
+class APIRequest {
+  - requestParameters: Map<String, Object>
+  + addParameter(key: String, value: Object)
+}
+
+class APIResponse {
+  - responseParameters: Map<String, Object>
+  + getParameter(key: String): Object
+}
+
+class PaymentGateway {
+  - adapters: List<PaymentGatewayAdapter>
+  + getAdapterForBank(bankName: String): PaymentGatewayAdapter
+  + registerAdapter(bankName: String, adapter: PaymentGatewayAdapter)
+}
+
+
+PaymentGatewayAdapter <|-- BankXAdapter
+PaymentGatewayAdapter <|-- BankYAdapter
+PaymentGateway o-- PaymentGatewayAdapter
+
+@enduml

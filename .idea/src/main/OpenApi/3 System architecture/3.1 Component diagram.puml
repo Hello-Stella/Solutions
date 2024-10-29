@@ -50,9 +50,7 @@ collections Language_Templates
 
 }
 
- component Report_generation_service as Y {
-   component ".NET_Report_service" #text:red {
-}
+ component Invoice_generation_service as Y {
    component Mail_Service #text:red{
 }
 

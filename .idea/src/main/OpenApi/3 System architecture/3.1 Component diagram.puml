@@ -19,20 +19,20 @@ node Integration_Layer as E {
 card OpenShift #text:red {
 
 component Docker_Container as F #text:red {
-agent Adapter_ForPayment_Bank_A
+agent Adapter_ForPayment_Bank_X
 }
 
 component Docker_Container as F1 #text:red {
-agent Adapter_ForCancellation_Bank_A
+agent Adapter_ForCancellation_Bank_X
 }
 
 
 component Docker_Container as G #text:red {
-agent Adapter_ForPayment_Bank_B
+agent Adapter_ForPayment_Bank_Y
 }
 
 component Docker_Container as G1 #text:red {
-agent Adapter_ForCancellation_Bank_B
+agent Adapter_ForCancellation_Bank_Y
 }
 
 }
@@ -82,12 +82,12 @@ component Tokenization_service as I
 }
 
 
-node Issuing_Bank_A as J {
+node Issuing_Bank_X as J {
 component _service1
 }
 
 
-node Issuing_Bank_B as K {
+node Issuing_Bank_Y as K {
 component _service
 }
 
